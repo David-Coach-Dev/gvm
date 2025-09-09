@@ -12,11 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, windows, darwin]
-        goarch: [amd64, arm64]
-        exclude:
+        include:
           - goos: windows
+            goarch: amd64
+            suffix: .exe
+          - goos: linux
+            goarch: amd64
+            suffix: ""
+          - goos: linux
             goarch: arm64
+            suffix: ""
+          - goos: darwin
+            goarch: amd64
+            suffix: ""
+          - goos: darwin
+            goarch: arm64
+            suffix: ""
 
     steps:
     - uses: actions/checkout@v4
@@ -30,12 +41,10 @@ jobs:
       env:
         GOOS: ${{ matrix.goos }}
         GOARCH: ${{ matrix.goarch }}
+        CGO_ENABLED: 0
       run: |
-        if [ "$GOOS" = "windows" ]; then
-          go build -ldflags="-s -w" -o gvm-$GOOS-$GOARCH.exe main.go
-        else
-          go build -ldflags="-s -w" -o gvm-$GOOS-$GOARCH main.go
-        fi
+        VERSION=${GITHUB_REF#refs/tags/}
+        go build -ldflags="-s -w -X 'main.version=$VERSION'" -o gvm-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }} main.go
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
@@ -60,14 +69,18 @@ jobs:
         mkdir -p release
         find . -name "gvm-*" -type f -exec cp {} release/ \;
 
-        # Create main gvm.exe for Windows (default)
+        # Create main executables (like NVM-Windows)
         if [ -f "release/gvm-windows-amd64.exe" ]; then
           cp release/gvm-windows-amd64.exe release/gvm.exe
+          cp release/gvm-windows-amd64.exe release/gvm-setup.exe
         fi
 
         # Create checksums
         cd release
         sha256sum * > checksums.txt
+        md5sum * > md5sums.txt
+
+        # Show files
         ls -la
 
     - name: Create Release
@@ -78,7 +91,7 @@ jobs:
         prerelease: false
         generate_release_notes: true
         body: |
-          ## Installation
+          ## 🚀 Installation
 
           ### One-line Installation (recommended)
 
@@ -92,14 +105,47 @@ jobs:
           curl -o- https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install.sh | bash
           ```
 
+          **Command Prompt (Windows):**
+          ```cmd
+          curl -o install-gvm.bat https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-gvm.bat && install-gvm.bat
+          ```
+
           ### Manual Installation
 
-          1. Download the appropriate binary for your system
-          2. Add it to your PATH
+          1. Download `gvm-setup.exe` (Windows) or appropriate binary for your system
+          2. Run the installer or add binary to your PATH
           3. Start using GVM!
 
-          ## Changes
+          ## 📦 Assets
 
-          See the changelog below for detailed changes in this release.
+          - **`gvm-setup.exe`** - Main Windows installer
+          - **`gvm.exe`** - Windows binary
+          - **`gvm-linux-amd64`** - Linux binary (AMD64)
+          - **`gvm-darwin-amd64`** - macOS binary (Intel)
+          - **`gvm-darwin-arm64`** - macOS binary (Apple Silicon)
+          - **`checksums.txt`** - SHA256 checksums
+          - **`md5sums.txt`** - MD5 checksums
+
+          ## 🎯 Commands
+
+          ```bash
+          gvm install 1.21.0    # Install Go 1.21.0
+          gvm use 1.21.0        # Switch to Go 1.21.0
+          gvm list              # List installed versions
+          gvm listall           # List available versions
+          gvm uninstall 1.20.5  # Remove Go 1.20.5
+          ```
+
+          ## 💡 Features
+
+          - ✅ **Zero Dependencies** - No Go required for installation
+          - ✅ **Cross-platform** - Windows, Linux, macOS
+          - ✅ **NVM-inspired** - Familiar commands and workflow
+          - ✅ **Auto-switching** - Support for `.go-version` files
+          - ✅ **Shell Integration** - PowerShell, Bash, Zsh, Fish
+
+          ---
+
+          **Full Changelog:** [${{ github.event.before }}...${{ github.sha }}](https://github.com/${{ github.repository }}/compare/${{ github.event.before }}...${{ github.sha }})
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
