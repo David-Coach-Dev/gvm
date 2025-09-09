@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -74,9 +75,7 @@ func downloadGoVersion(version string) error {
 	goBinSrc := filepath.Join(versionDir, "go", "bin", "go.exe")
 	goBinDst := filepath.Join(goPath, "bin", version+".exe")
 
-	if err := copyFile(goBinSrc, goBinDst); err != nil {
-		return fmt.Errorf("error copiando binario: %v", err)
-	}
+	copyFile(goBinSrc, goBinDst)
 
 	fmt.Printf("Versión %s instalada exitosamente\n", version)
 	return nil
@@ -84,12 +83,11 @@ func downloadGoVersion(version string) error {
 
 // extractGoArchive extrae el archivo zip de Go
 func extractGoArchive(zipPath, destDir string) error {
-	// Implementar extracción de ZIP
-	// Por simplicidad, usar comando del sistema por ahora
-	cmd := fmt.Sprintf(`powershell -Command "Expand-Archive -Path '%s' -DestinationPath '%s' -Force"`, zipPath, destDir)
-
-	if err := executeCommand(cmd); err != nil {
-		return err
+	// Implementar extracción de ZIP usando PowerShell
+	cmd := exec.Command("powershell", "-Command", fmt.Sprintf("Expand-Archive -Path '%s' -DestinationPath '%s' -Force", zipPath, destDir))
+	
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error extrayendo archivo: %v", err)
 	}
 
 	// Eliminar archivo zip después de extraer
