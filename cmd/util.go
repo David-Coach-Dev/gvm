@@ -174,8 +174,17 @@ func getCurGoVersion() string {
 	getCurGoVerCmd := makeExecCmd(getCurGoVerCmdStr)
 	b, err := getCurGoVerCmd.Output()
 	if err != nil {
-		// Si no hay go.exe disponible, retornar mensaje por defecto
-		return "go0.0.0 (no instalado)"
+		// Si no hay go.exe disponible, verificar si hay una versión configurada por GVM
+		gvmCurrentPath := filepath.Join(GVMHOME, "current")
+		if _, err := os.Stat(gvmCurrentPath); err == nil {
+			if content, err := os.ReadFile(gvmCurrentPath); err == nil {
+				currentVersion := strings.TrimSpace(string(content))
+				if currentVersion != "" {
+					return "go" + currentVersion + " (gvm-managed)"
+				}
+			}
+		}
+		return "go0.0.0 (no disponible)"
 	}
 	versionOutput := strings.Split(string(b), " ")
 	if len(versionOutput) < 3 {
