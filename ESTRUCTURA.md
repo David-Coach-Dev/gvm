@@ -1,4 +1,4 @@
-# GVM - Go Version Manager
+# GVM - Go Version Manager for Windows
 
 ## 📁 Estructura de Archivos
 
@@ -24,46 +24,46 @@ gvm/
 │   └── bootstrap.go              # Descarga directa de Go
 │
 ├── 🗂️ .github/workflows/         # CI/CD
-│   └── release.yml               # Build y release automático
+│   └── release.yml               # Build y release automático (solo Windows)
 │
 ├── 🚀 install-nvm-style.ps1      # Instalador PowerShell (principal)
-├── 🚀 install.sh                 # Instalador Bash (Linux/macOS)  
 ├── 🚀 install-gvm.bat            # Instalador CMD (Windows)
 ├── 🔧 build.ps1                  # Build script PowerShell
-└── 🔧 build.sh                   # Build script Bash
+└── � ESTRUCTURA.md              # Este archivo
 ```
 
 ## 🎯 Archivos Principales
 
-### **Instaladores (Estilo NVM)**
+### **Instaladores (Solo Windows)**
+
 - `install-nvm-style.ps1` - Instalador principal para Windows PowerShell
-- `install.sh` - Instalador para Linux/macOS con Bash  
 - `install-gvm.bat` - Instalador alternativo para CMD Windows
 
 ### **Código Fuente**
+
 - `main.go` - Punto de entrada, configuración CLI con Cobra
 - `cmd/*.go` - Implementación de todos los comandos
 
 ### **Automatización**
-- `.github/workflows/release.yml` - CI/CD para builds automáticos
-- `build.ps1` / `build.sh` - Scripts de build local
+
+- `.github/workflows/release.yml` - CI/CD para builds de Windows
+- `build.ps1` - Script de build para Windows
 
 ## 🚀 Uso Rápido
 
 ### Instalación One-liner
+
 ```powershell
 # PowerShell (Recomendado)
 iwr -useb https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-nvm-style.ps1 | iex
-
-# Bash (Linux/macOS)  
-curl -o- https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install.sh | bash
 
 # CMD (Windows)
 curl -o install-gvm.bat https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-gvm.bat && install-gvm.bat
 ```
 
 ### Comandos Básicos
-```bash
+
+```cmd
 gvm install 1.21.0    # Instalar Go 1.21.0
 gvm use 1.21.0        # Cambiar a Go 1.21.0  
 gvm list              # Listar versiones instaladas
@@ -73,11 +73,11 @@ gvm uninstall 1.20.5  # Desinstalar Go 1.20.5
 
 ## ✅ Características
 
-- ✅ **Instalación con una línea** (como NVM)
+- ✅ **Windows Only** - Optimizado específicamente para Windows
+- ✅ **Instalación con una línea** (como NVM-Windows)
 - ✅ **No requiere Go preinstalado**
-- ✅ **Cross-platform** (Windows, Linux, macOS)
 - ✅ **Auto-configuración de PATH**
-- ✅ **Integración con shell**
+- ✅ **Integración con PowerShell y CMD**
 - ✅ **Auto-switching con .go-version**
 - ✅ **CI/CD automático**
 - ✅ **Estructura limpia y mantenible**

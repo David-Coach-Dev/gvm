@@ -1,9 +1,11 @@
-# GVM - Go Version Manager
+# GVM - Go Version Manager for Windows
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/David-Coach-Dev/gvm)](https://goreportcard.com/report/github.com/David-Coach-Dev/gvm)
 [![GitHub release](https://img.shields.io/github/release/David-Coach-Dev/gvm.svg)](https://github.com/David-Coach-Dev/gvm/releases)
 
-GVM is a Go version manager, inspired by NVM for Node.js. It allows you to install and switch between multiple versions of Go with ease.
+GVM is a Go version manager for Windows, inspired by [NVM for Node.js](https://github.com/nvm-sh/nvm) and [NVM-Windows](https://github.com/coreybutler/nvm-windows). It allows you to install and switch between multiple versions of Go with ease on Windows systems.
+
+> **Note:** For Linux/macOS, use the original [GVM](https://github.com/moovweb/gvm)
 
 ## 🚀 Installation
 
@@ -12,11 +14,6 @@ GVM is a Go version manager, inspired by NVM for Node.js. It allows you to insta
 **PowerShell (Windows):**
 ```powershell
 iwr -useb https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-nvm-style.ps1 | iex
-```
-
-**Bash (Linux/macOS):**
-```bash
-curl -o- https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install.sh | bash
 ```
 
 **Command Prompt (Windows):**
@@ -66,18 +63,17 @@ GVM can automatically switch to this version when you enter the directory (if co
 
 ## 🎯 Features
 
+- **Windows Only**: Optimized specifically for Windows (like NVM-Windows for Node.js)
 - **Zero Dependencies**: No need to have Go pre-installed
-- **Cross-platform**: Works on Windows, macOS, and Linux
 - **NVM-inspired**: Familiar commands and workflow
 - **Auto-switching**: Optional automatic version switching per project
-- **Shell Integration**: Works with PowerShell, Bash, Zsh, and Fish
+- **Shell Integration**: Works with PowerShell and Command Prompt
 - **Safe Installation**: Installs in user directory, no admin privileges required
 
 ## 📂 Directory Structure
 
 GVM installs Go versions in:
 - **Windows**: `%LOCALAPPDATA%\gvm\versions\`
-- **Unix**: `~/.gvm/versions/`
 
 
 | Command | Description |

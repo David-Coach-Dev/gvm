@@ -1,6 +1,6 @@
 module github.com/nicewook/gvm
 
-go 1.25
+go 1.21
 
 require (
 	github.com/PuerkitoBio/goquery v1.6.0

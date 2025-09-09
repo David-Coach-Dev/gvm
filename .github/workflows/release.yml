@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build binaries
+    name: Build Windows binaries
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,18 +16,9 @@ jobs:
           - goos: windows
             goarch: amd64
             suffix: .exe
-          - goos: linux
-            goarch: amd64
-            suffix: ""
-          - goos: linux
-            goarch: arm64
-            suffix: ""
-          - goos: darwin
-            goarch: amd64
-            suffix: ""
-          - goos: darwin
-            goarch: arm64
-            suffix: ""
+          - goos: windows
+            goarch: 386
+            suffix: .exe
 
     steps:
     - uses: actions/checkout@v4
@@ -100,11 +91,6 @@ jobs:
           iwr -useb https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-nvm-style.ps1 | iex
           ```
 
-          **Bash (Linux/macOS):**
-          ```bash
-          curl -o- https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install.sh | bash
-          ```
-
           **Command Prompt (Windows):**
           ```cmd
           curl -o install-gvm.bat https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-gvm.bat && install-gvm.bat
@@ -112,23 +98,22 @@ jobs:
 
           ### Manual Installation
 
-          1. Download `gvm-setup.exe` (Windows) or appropriate binary for your system
+          1. Download `gvm-setup.exe` or `gvm.exe`
           2. Run the installer or add binary to your PATH
           3. Start using GVM!
 
           ## 📦 Assets
 
-          - **`gvm-setup.exe`** - Main Windows installer
-          - **`gvm.exe`** - Windows binary
-          - **`gvm-linux-amd64`** - Linux binary (AMD64)
-          - **`gvm-darwin-amd64`** - macOS binary (Intel)
-          - **`gvm-darwin-arm64`** - macOS binary (Apple Silicon)
+          - **`gvm-setup.exe`** - Main Windows installer (64-bit)
+          - **`gvm.exe`** - Windows binary (64-bit)
+          - **`gvm-windows-amd64.exe`** - Windows binary (64-bit)
+          - **`gvm-windows-386.exe`** - Windows binary (32-bit)
           - **`checksums.txt`** - SHA256 checksums
           - **`md5sums.txt`** - MD5 checksums
 
           ## 🎯 Commands
 
-          ```bash
+          ```cmd
           gvm install 1.21.0    # Install Go 1.21.0
           gvm use 1.21.0        # Switch to Go 1.21.0
           gvm list              # List installed versions
@@ -138,11 +123,14 @@ jobs:
 
           ## 💡 Features
 
+          - ✅ **Windows Only** - Optimized specifically for Windows
           - ✅ **Zero Dependencies** - No Go required for installation
-          - ✅ **Cross-platform** - Windows, Linux, macOS
           - ✅ **NVM-inspired** - Familiar commands and workflow
           - ✅ **Auto-switching** - Support for `.go-version` files
-          - ✅ **Shell Integration** - PowerShell, Bash, Zsh, Fish
+          - ✅ **Shell Integration** - PowerShell and Command Prompt
+          - ✅ **32-bit & 64-bit** - Support for both architectures
+
+          > **Note:** For Linux/macOS, use the original [GVM](https://github.com/moovweb/gvm)
 
           ---
 
