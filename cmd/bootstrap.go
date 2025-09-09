@@ -85,7 +85,7 @@ func downloadGoVersion(version string) error {
 func extractGoArchive(zipPath, destDir string) error {
 	// Implementar extracción de ZIP usando PowerShell
 	cmd := exec.Command("powershell", "-Command", fmt.Sprintf("Expand-Archive -Path '%s' -DestinationPath '%s' -Force", zipPath, destDir))
-	
+
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("error extrayendo archivo: %v", err)
 	}

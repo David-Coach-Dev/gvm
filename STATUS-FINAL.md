@@ -3,8 +3,10 @@
 ## ✅ Completado Exitosamente
 
 ### 🔧 Correcciones Técnicas Implementadas
+
 - **Go 1.21**: Actualizado desde Go 1.25 para compatibilidad
 - **GitHub Actions v4**: Actualizadas las actions deprecadas (upload-artifact y download-artifact)
+- **Bootstrap.go corregido**: Eliminados errores de compilación (copyFile y executeCommand)
 - **Imports modernizados**: Eliminados imports no utilizados y actualizados a APIs modernas de Go
 - **Compilación limpia**: Binarios generándose correctamente para Windows
 
