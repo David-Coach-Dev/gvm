@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,6 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -31,7 +30,7 @@ import (
 func useSystemGo() {
 
 	systemGoPath := filepath.Join(goRoot, "bin")
-	files, err := ioutil.ReadDir(systemGoPath)
+	files, err := os.ReadDir(systemGoPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,7 +40,7 @@ func useSystemGo() {
 	}
 
 	for _, fn := range fNames {
-		ver := strings.TrimRight(fn, ".exe")
+		ver := strings.TrimSuffix(fn, ".exe")
 		if isGoVersionString(ver) {
 			fmtV.Printf("trying to use system Go SDK: %s\n", ver)
 
@@ -109,14 +108,14 @@ func useVersion(version string) { // ex) version == 1.15.2 (without "go")
 	useExe := useVersion + ".exe"
 
 	// check regex of the version name
-	if isGoVersionString(useVersion) == false {
+	if !isGoVersionString(useVersion) {
 		fmt.Printf("%s is not proper go version format\n", makeColorString(colorRed, version))
 		os.Exit(0)
 	} else {
 		fmtV.Printf("%s is good go version format\n", makeColorString(colorGreen, version))
 	}
 	// check the version exist or already downloaded
-	if alreadyInstalled(useVersion) == false {
+	if !alreadyInstalled(useVersion) {
 		fmt.Printf("%s is not installed version", makeColorString(colorRed, version))
 		os.Exit(0)
 	}
@@ -125,7 +124,7 @@ func useVersion(version string) { // ex) version == 1.15.2 (without "go")
 
 	// check current go.exe exist - we will remove it
 	curGoExePath, _ := getCurGoExePath()
-	if fileExist(curGoExePath) == false {
+	if !fileExist(curGoExePath) {
 		fmt.Println("cannot find currently using go.exe file")
 		os.Exit(0)
 		return
@@ -134,7 +133,7 @@ func useVersion(version string) { // ex) version == 1.15.2 (without "go")
 	// check check the version to use
 	// then copy the go<required-version>.exe to go.exe
 	useExeFullPath := filepath.Join(goPath, "bin", useExe)
-	if fileExist(useExeFullPath) == false {
+	if !fileExist(useExeFullPath) {
 		fmt.Printf("cannot find go version that we want to use: %v\n", useExeFullPath)
 		os.Exit(0)
 		return
@@ -177,10 +176,10 @@ func onlyOneGoExeAllowed() {
 
 	goExeFiles := getAllGoExePath()
 	if len(goExeFiles) <= 1 {
-		fmtV.Printf("go.exe count: %s, no other go.exe\n", len(goExeFiles))
+		fmtV.Printf("go.exe count: %d, no other go.exe\n", len(goExeFiles))
 		return
 	}
-	fmtV.Printf("go.exe count: %s\n", len(goExeFiles))
+	fmtV.Printf("go.exe count: %d\n", len(goExeFiles))
 
 	// check systemGo exist
 	var systemGoExist bool
@@ -193,8 +192,8 @@ func onlyOneGoExeAllowed() {
 	// if systemGoExist, remove all go.exe in goPath
 	// or leave the first go.exe and remove others all
 	for i, v := range goExeFiles {
-		if strings.Contains(v, goRoot) == false {
-			if i == 0 && systemGoExist == false { // one go.exe should exist
+		if !strings.Contains(v, goRoot) {
+			if i == 0 && !systemGoExist { // one go.exe should exist
 				continue
 			}
 			if err := os.Remove(v); err != nil {

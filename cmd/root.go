@@ -18,6 +18,8 @@ package cmd
 import (
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -48,8 +50,8 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "gvm",
 	Short: `"gvm" is Go Programming language version manager for Windows`,
-	Long: `""gvm" is Go Programming language version manager for Windows. 
-You can install/uninstall any version you want to use 
+	Long: `""gvm" is Go Programming language version manager for Windows.
+You can install/uninstall any version you want to use
 and choose the version what you want to use.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -111,9 +113,36 @@ func initConfig() {
 	// Set verbose https://play.golang.org/p/RoRcgJV0pDV
 	fmtV = goverbose.New(os.Stdout, verbose)
 
-	// JHS custom config
+	// JHS custom config - usar rutas de usuario por defecto
 	goRoot = os.Getenv("GOROOT")
 	goPath = os.Getenv("GOPATH")
+
+	// Si no hay GOROOT o apunta a Program Files, usar ruta de usuario
+	if goRoot == "" || strings.Contains(goRoot, "Program Files") {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatal("No se pudo obtener directorio de usuario:", err)
+		}
+		goRoot = filepath.Join(homeDir, "go", "sdk")
+	}
+
+	// Si no hay GOPATH, usar ruta de usuario
+	if goPath == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatal("No se pudo obtener directorio de usuario:", err)
+		}
+		goPath = filepath.Join(homeDir, "go")
+	}
+
+	// Crear directorios si no existen
+	if err := os.MkdirAll(filepath.Join(goRoot, "bin"), 0755); err != nil {
+		fmtV.Printf("Advertencia: No se pudo crear %s: %v\n", filepath.Join(goRoot, "bin"), err)
+	}
+	if err := os.MkdirAll(filepath.Join(goPath, "bin"), 0755); err != nil {
+		fmtV.Printf("Advertencia: No se pudo crear %s: %v\n", filepath.Join(goPath, "bin"), err)
+	}
+
 	fmtV.Printf("GOROOT: %s\n", goRoot)
 	fmtV.Printf("GOPATH: %s\n--\n", goPath)
 

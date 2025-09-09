@@ -1,2 +1,27 @@
-.vscode/settings.json
+# Binaries
 gvm.exe
+gvm
+*.exe
+*.zip
+
+# Build directories
+build/
+dist/
+release/
+
+# Development files
+.vscode/
+debug.log
+temp.txt
+*.tmp
+
+# Go specific
+vendor/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Test files
+*-test.*
+test-*

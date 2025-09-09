@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -175,17 +174,23 @@ func getCurGoVersion() string {
 	getCurGoVerCmd := makeExecCmd(getCurGoVerCmdStr)
 	b, err := getCurGoVerCmd.Output()
 	if err != nil {
-		log.Fatal("getCurGoVerCmd: ", err)
+		// Si no hay go.exe disponible, retornar mensaje por defecto
+		return "go0.0.0 (no instalado)"
 	}
 	versionOutput := strings.Split(string(b), " ")
+	if len(versionOutput) < 3 {
+		return "go0.0.0 (formato inválido)"
+	}
 	return versionOutput[2]
 }
 
 func getSystemGoExeName() string {
 	dirPath := filepath.Join(goRoot, "bin")
-	files, err := ioutil.ReadDir(dirPath)
+	files, err := os.ReadDir(dirPath)
 	if err != nil {
-		log.Fatal("ReadDir: ", err, dirPath)
+		// Si la carpeta no existe, retornar go.exe por defecto
+		fmtV.Printf("Directorio %s no existe o está vacío\n", dirPath)
+		return "go.exe"
 	}
 	for _, file := range files {
 		name := file.Name()
@@ -197,8 +202,9 @@ func getSystemGoExeName() string {
 			return name + ".exe"
 		}
 	}
-	log.Fatal("no system go execution file found")
-	return ""
+	// Si no se encuentra ningún binario, retornar go.exe por defecto
+	fmtV.Printf("No se encontró binario de Go en %s\n", dirPath)
+	return "go.exe"
 }
 
 func getSystemGoVer() string {

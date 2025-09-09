@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +17,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
-	"sync"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -33,10 +31,7 @@ func alreadyInstalled(gover string) bool {
 	}
 
 	_, found := find(goVerList, gover)
-	if found {
-		return true
-	}
-	return false
+	return found
 }
 
 func isExistRemote(gover string) bool {
@@ -49,74 +44,63 @@ func isExistRemote(gover string) bool {
 }
 
 func installOneVersion(version string) {
-
 	installVersion := "go" + version
 	installURL := "golang.org/dl/" + installVersion
 	downloadExe := goPath + "\\bin\\" + installVersion + ".exe"
 
-	// check regex of the version name
-	if isGoVersionString(installVersion) == false {
-		fmt.Printf("%s is not proper go version format\n", makeColorString(colorRed, version))
+	// Validar formato de versión
+	if !isGoVersionString(installVersion) {
+		fmt.Printf("%s no tiene formato válido\n", makeColorString(colorRed, version))
 		return
-	} else {
-		fmtV.Printf("%s is good go version format\n", makeColorString(colorGreen, version))
 	}
-	// check the version exist or already downloaded
+	fmtV.Printf("%s tiene formato válido\n", makeColorString(colorGreen, version))
+
+	// Verificar si ya está instalado
 	if alreadyInstalled(installVersion) {
-		fmt.Printf("%s is already installed", makeColorString(colorRed, installVersion))
+		fmt.Printf("%s ya está instalado\n", makeColorString(colorRed, installVersion))
 		return
 	}
-	if isExistRemote(installVersion) == false {
-		fmt.Printf("%s is not existing version\n", makeColorString(colorRed, installVersion))
+	// Verificar si existe remotamente
+	if !isExistRemote(installVersion) {
+		fmt.Printf("%s no existe remotamente\n", makeColorString(colorRed, installVersion))
 		return
 	}
 
-	fmtV.Printf("start to install %s\n--\n", installVersion)
-	fmtV.Printf("URL to download: %s\n", installURL)
-	fmtV.Printf("download and execute %s\nfirst execution, it will downloaded go SDK, after then it will execute downloaded go SDK version\n--\n", downloadExe)
+	fmtV.Printf("Iniciando instalación de %s\n--\n", installVersion)
+	fmtV.Printf("URL de descarga: %s\n", installURL)
+	fmtV.Printf("Descargando y ejecutando %s\n--\n", downloadExe)
 
-	// command wants to run
-	// refer to: https://www.ardanlabs.com/blog/2020/04/modules-06-vendoring.html
-	/*
-		go get golang.org/dl/go1.13.10
-		go1.13.10 download
-	*/
-	getCmd := exec.Command("go", "get", installURL)
+	// Ejecutar comando de descarga
+	getCmd := exec.Command("go", "install", installURL+"@latest")
 	getCmd.Stdout = os.Stdout
 	getCmd.Stderr = os.Stderr
+	if err := getCmd.Run(); err != nil {
+		fmt.Printf("Error ejecutando go get: %v\n", err)
+		return
+	}
 
+	// Esperar a que el archivo se descargue
+	timeoutSecond := 30
+	elapsedSecond := 0
+	for !fileExist(downloadExe) {
+		fmtV.Printf("Aún no se instala %s.exe\n", installVersion)
+		time.Sleep(1000 * time.Millisecond)
+		elapsedSecond++
+		if elapsedSecond >= timeoutSecond {
+			fmt.Printf("Timeout al descargar el archivo. %d segundos\n", timeoutSecond)
+			return
+		}
+	}
+	fmtV.Printf("%s.exe instalado correctamente\n", installVersion)
+
+	// Ejecutar comando para descargar el SDK
+	fmt.Printf("Descargando SDK ejecutando %s.exe\n", installVersion)
 	downloadCmd := exec.Command(downloadExe, "download")
 	downloadCmd.Stdout = os.Stdout
 	downloadCmd.Stderr = os.Stderr
-
-	if err := getCmd.Run(); err != nil {
-		log.Fatal("getCmd:", err)
-	}
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		var (
-			timeoutSecond = 30
-			elapsedSecond = 0
-		)
-		for !fileExist(downloadExe) {
-			fmtV.Printf("not yet installed %s.exe file for download go SDK\n", installVersion)
-			time.Sleep(1000 * time.Millisecond)
-
-			elapsedSecond++
-			if elapsedSecond >= timeoutSecond {
-				log.Fatalf("Download file timeout. %d seconds", timeoutSecond)
-			}
-		}
-		fmtV.Printf("%s.exe installed successfully\n", installVersion)
-		wg.Done()
-	}()
-	wg.Wait()
-
-	fmt.Printf("start downloading go SDK by executing %s.exe\n", installVersion)
 	if err := downloadCmd.Run(); err != nil {
-		log.Fatal(err)
+		fmt.Printf("Error ejecutando descarga de SDK: %v\n", err)
+		return
 	}
 }
 

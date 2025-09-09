@@ -1,48 +1,147 @@
-# GVM: Go Version Manager for Windows
+# GVM - Go Version Manager
 
-<!--- These are examples. See https://shields.io for others or to customize this set of shields. You might want to include dependencies, project status and licence info here --->
+[![Go Report Card](https://goreportcard.com/badge/github.com/David-Coach-Dev/gvm)](https://goreportcard.com/report/github.com/David-Coach-Dev/gvm)
+[![GitHub release](https://img.shields.io/github/release/David-Coach-Dev/gvm.svg)](https://github.com/David-Coach-Dev/gvm/releases)
 
-![GitHub repo size](https://img.shields.io/github/repo-size/nicewook/gvm)
-![GitHub contributors](https://img.shields.io/github/contributors/nicewook/gvm)
-![GitHub stars](https://img.shields.io/github/stars/nicewook/gvm?style=social)
-![GitHub forks](https://img.shields.io/github/forks/nicewook/gvm?style=social)
+GVM is a Go version manager, inspired by NVM for Node.js. It allows you to install and switch between multiple versions of Go with ease.
 
-Project name is a `gvm` that allows `Go developers who are using Windows` to use multiple go version easily.
-There is already `gvm`(https://github.com/moovweb/gvm) for Linux and MacOS, but I couldn't find
-well working `gvm` for Windows OS, so the project started.
+## 🚀 Installation
 
-## Installing `gvm`
+### One-line Installation (recommended)
 
-To install `gvm` on Windows, follow these steps:
-
-```
-$ go get -u github.com/nicewook/gvm
+**PowerShell (Windows):**
+```powershell
+iwr -useb https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-nvm-style.ps1 | iex
 ```
 
-## Features
-
-- version
-- list
-- listall
-- install
-- uninstall
-- use
-  
-
-## Using `gvm` commands
-
-### version
-
-`version` command shows the gvm version.
+**Bash (Linux/macOS):**
+```bash
+curl -o- https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install.sh | bash
 ```
-$ gvm version 
+
+**Command Prompt (Windows):**
+```cmd
+curl -o install-gvm.bat https://raw.githubusercontent.com/David-Coach-Dev/gvm/main/install-gvm.bat && install-gvm.bat
 ```
-![gvm version command](./gif/gvm-version.gif)
+
+### Manual Installation
+
+1. Download the latest release from [GitHub Releases](https://github.com/David-Coach-Dev/gvm/releases)
+2. Extract and add to your PATH
+3. Set `GVM_HOME` environment variable
+
+## 📖 Usage
+
+### Install and use Go versions
+
+```bash
+# Install the latest Go version
+gvm install latest
+
+# Install a specific Go version
+gvm install 1.21.0
+gvm install 1.20.5
+
+# Use a specific Go version
+gvm use 1.21.0
+
+# List installed versions
+gvm list
+
+# List all available versions
+gvm listall
+
+# Uninstall a version
+gvm uninstall 1.20.5
+```
+
+### Auto-switching with .go-version
+
+Create a `.go-version` file in your project root:
+```
+1.21.0
+```
+
+GVM can automatically switch to this version when you enter the directory (if configured during installation).
+
+## 🎯 Features
+
+- **Zero Dependencies**: No need to have Go pre-installed
+- **Cross-platform**: Works on Windows, macOS, and Linux
+- **NVM-inspired**: Familiar commands and workflow
+- **Auto-switching**: Optional automatic version switching per project
+- **Shell Integration**: Works with PowerShell, Bash, Zsh, and Fish
+- **Safe Installation**: Installs in user directory, no admin privileges required
+
+## 📂 Directory Structure
+
+GVM installs Go versions in:
+- **Windows**: `%LOCALAPPDATA%\gvm\versions\`
+- **Unix**: `~/.gvm/versions/`
 
 
-### list
+| Command | Description |
+|---------|-------------|
+| `gvm install <version>` | Install a specific Go version |
+| `gvm use <version>` | Switch to a specific Go version |
+| `gvm list` | List installed Go versions |
+| `gvm listall` | List all available Go versions |
+| `gvm uninstall <version>` | Remove a Go version |
+| `gvm version` | Show GVM version |
 
-`list` command shows the installed go SDK(s), and `system` means originally installed go.
+### Examples
+
+```bash
+# Install Go 1.21.0
+gvm install 1.21.0
+
+# Switch to Go 1.21.0
+gvm use 1.21.0
+
+# List installed versions
+gvm list
+
+# List all available versions
+gvm listall
+
+# Remove Go 1.20.5
+gvm uninstall 1.20.5
+```
+
+## 🛠️ Development
+
+### Building from source
+
+```bash
+git clone https://github.com/David-Coach-Dev/gvm.git
+cd gvm
+go build -o gvm.exe main.go
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Inspired by [NVM](https://github.com/nvm-sh/nvm) for Node.js
+- Original GVM for Unix by [moovweb](https://github.com/moovweb/gvm)
+
+## 📞 Support
+
+If you have any questions or run into issues, please open an issue on [GitHub](https://github.com/David-Coach-Dev/gvm/issues).
+
+---
+
+Made with ❤️ for the Go community
 
 ```
 $ gvm list 
